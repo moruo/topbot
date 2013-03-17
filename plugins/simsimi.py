@@ -38,12 +38,14 @@ import sys
 sys.path.append('..')
 
 import requests
+import urllib2
+#import cookielib, urllib2
 import random
 
 try:
     from settings import SIMSIMI_KEY
 except:
-    SIMSIMI_KEY = ''
+    SIMSIMI_KEY = 'duapp.com'
 
 
 class SimSimi:
@@ -53,7 +55,8 @@ class SimSimi:
         self.session = requests.Session()
 
         self.chat_url = 'http://www.simsimi.com/func/req?lc=ch&msg=%s'
-        self.api_url = 'http://api.simsimi.com/request.p?key=%s&lc=ch&ft=1.0&text=%s'
+        #self.api_url = 'http://api.simsimi.com/request.p?key=%s&lc=ch&ft=1.0&text=%s'
+        self.api_url = 'http://xiaojiji.duapp.com/simsimi.php?key=%s'
 
         if not SIMSIMI_KEY:
             self.initSimSimiCookie()
@@ -69,18 +72,21 @@ class SimSimi:
         if method == 'normal':
             r = self.session.get(self.chat_url % message)
         else:
-            url = self.api_url % (SIMSIMI_KEY, message)
-            r = requests.get(url)
+            #url = self.api_url % (SIMSIMI_KEY, message)
+            url = self.api_url % message
+            #r = requests.get(url)
+            r = urllib2.urlopen(url, timeout=10)
         return r
 
     def chat(self, message=''):
         if message:
             r = self.getSimSimiResult(message, 'normal' if not SIMSIMI_KEY else 'api')
             try:
-                answer = r.json()['response'].encode('utf-8')
+                #answer = r.json()['response'].encode('utf-8')
+                answer = r.read()
                 return answer
             except:
-                return random.choice(['呵呵', '。。。', '= =', '=。='])
+               return random.choice(['呵呵', '。。。', '= =', '=。='])
         else:
             return '叫我干嘛'
 

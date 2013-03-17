@@ -28,10 +28,11 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import pkgutil
 import plugins
+from plugins import *
 
 plugin_modules = []
 for plugin_name in plugins.__all__:
-    __import__('plugins.%s' % plugin_name)
+    #__import__('plugins.%s' % plugin_name)
     plugin_modules.append(getattr(plugins, plugin_name))
 
 # some magic here

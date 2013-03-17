@@ -26,7 +26,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # 天气
 import os
-import requests
+import urllib2
 import cPickle as pickle
 
 
@@ -44,7 +44,8 @@ def test(data, bot):
 
 def weather(cityid):
     try:
-        weatherinfo = requests.get('http://www.weather.com.cn/data/cityinfo/' + cityid + '.html').json()['weatherinfo']
+        r = urllib2.urlopen('http://www.weather.com.cn/data/cityinfo/' + cityid + '.html')
+        weatherinfo = r.read().json()['weatherinfo']
         return (weatherinfo['city'] + ', ' + weatherinfo['weather'] + ', ' + weatherinfo['temp1'] + ' ~ ' + weatherinfo['temp2']).encode('utf8')
     except:
         return 0

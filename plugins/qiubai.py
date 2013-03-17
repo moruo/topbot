@@ -27,33 +27,16 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 # 糗事百科TOP10
 import urllib2
 import re
-import redis
 import time
 import random
 
-try:
-    from settings import REDIS_HOST
-except:
-    REDIS_HOST = 'localhost'
-
-kv = redis.Redis(REDIS_HOST)
-
-key = time.strftime('%Y-%m-%d')
-
-
 def test(data, bot):
     return any(w in data['message'] for w in ['糗百', '笑话'])
-
 def handle(data, bot):
-    r = kv.lrange(key, 0, -1)
-    if r:
-        return random.choice(r)
     r = urllib2.urlopen('http://feed.feedsky.com/qiushi', timeout=60)
     p = r.read()
     r = re.findall('&lt;p&gt;([\s]+)([^\t]+)&lt;br/&gt;', p)
     if r:
-        for l in r:
-            kv.rpush(key, l[1])
         return random.choice(r)[1]
     else:
         raise Exception
